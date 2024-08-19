@@ -56,6 +56,11 @@ class HttpProxy {
     });
   }
 
+  public async Restart() {
+    await this.Close();
+    await this.Listen();
+  }
+
   public get Name() {
     return this.name;
   }
