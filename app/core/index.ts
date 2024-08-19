@@ -108,9 +108,7 @@ class HttpProxyHub {
         };
       });
     const imports = await Promise.all(configs.map((config) => import(/* @vite-ignore */config.jsFilePath)));
-    configs.forEach((config, index) => {
-      config.config = imports[index].default;
-    });
+    configs.forEach((config, index) => config.config = imports[index].default);
     return configs;
   }
 
