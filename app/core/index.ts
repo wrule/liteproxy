@@ -107,14 +107,12 @@ class HttpProxyHub {
           jsFilePath: path.join(prefix, name),
         };
       });
-    const imports = await Promise.all(configs.map(async (config) => {
-      try {
-        return await import(/* @vite-ignore */config.jsFilePath);
-      } catch (error) {
+    const imports = await Promise.all(configs.map((config) =>
+      import(/* @vite-ignore */config.jsFilePath).catch((error) => {
         console.log(error);
         return { default: { } };
-      }
-    }));
+      })
+    ));
     configs.forEach((config, index) => config.config = imports[index].default);
     return configs;
   }
