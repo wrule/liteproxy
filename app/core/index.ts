@@ -92,8 +92,19 @@ class HttpProxyHub {
 
   public store: HttpProxy[] = [];
 
+  private prefix = path.join(process.cwd(), 'configs/');
+
+  private async dimport(jsFilePath: string) {
+    try {
+      return await import(/* @vite-ignore */jsFilePath);
+    } catch (error) {
+      console.log(error);
+      return { default: { } };
+    }
+  }
+
   private async getAllConfigs() {
-    const prefix = path.join(process.cwd(), './configs/');
+    const prefix = this.prefix;
     const configs = fs.readdirSync(prefix)
       .filter((name) => fs.statSync(path.join(prefix, name)).isFile())
       .filter((name) => name.endsWith('.js'))
@@ -107,21 +118,19 @@ class HttpProxyHub {
           jsFilePath: path.join(prefix, name),
         };
       });
-    const imports = await Promise.all(configs.map((config) =>
-      import(/* @vite-ignore */config.jsFilePath).catch((error) => {
-        console.log(error);
-        return { default: { } };
-      })
-    ));
+    const imports = await Promise.all(configs.map((config) => this.dimport(config.jsFilePath)));
     configs.forEach((config, index) => config.config = imports[index].default);
     return configs;
   }
 
-  public Add(port: number, configCode: string, name = '') {
+  public async Add(port: number, configCode: string, name = '') {
     if (!name) name = '新建服务_' + dayjs().format('YYYY-MM-DD_HH-mm-ss');
-    const jsFilePath = path.join('./configs/', `${port}.${name}.js`);
+    const configs = await this.getAllConfigs();
+    if (configs.some((config) => config.port === port)) throw Error('端口已经存在');
+    const jsFilePath = path.join(this.prefix, `${port}.${name}.js`);
     fs.writeFileSync(jsFilePath, 'export default\n' + configCode.trim() + '\n', 'utf8');
-    this.getAllConfigs();
+    const config = await this.dimport(jsFilePath);
+    console.log(config);
   }
 }
 
@@ -129,7 +138,7 @@ export default
 async function main() {
   console.log('你好，世界');
   const hub = new HttpProxyHub();
-  hub.Add(2231, `
+  hub.Add(9098, `
 {
   '/': {
     target: 'http://xfiregod.perfma-inc.com/',
