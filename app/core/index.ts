@@ -107,11 +107,11 @@ class HttpProxyHub {
           jsFilePath: path.join(prefix, name),
         };
       });
-    const imports = await Promise.all(configs.map((config) => import(config.jsFilePath)));
+    const imports = await Promise.all(configs.map((config) => import(/* @vite-ignore */config.jsFilePath)));
     configs.forEach((config, index) => {
       config.config = imports[index].default;
     });
-    console.log(configs);
+    return configs;
   }
 
   public Add(port: number, configCode: string, name = '') {
