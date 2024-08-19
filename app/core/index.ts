@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import http, { Server } from "http";
 import express, { Express } from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
@@ -91,10 +92,29 @@ class HttpProxyHub {
 
   public store: HttpProxy[] = [];
 
+  private getAllConfigs() {
+    const prefix = './configs/';
+    console.log(
+      fs.readdirSync(prefix)
+        .filter((name) => fs.statSync(path.join(prefix, name)).isFile())
+        .filter((name) => name.endsWith('.js'))
+        .filter((name) => /^\d+_/.test(name))
+        .map((name) => {
+          const segs = name.split('_');
+          return {
+            port: Number(segs[0]),
+            name: segs[1],
+            config: import(path.join(prefix, name)),
+          };
+        }),
+    );
+  }
+
   public Add(port: number, configCode: string, name = '') {
     if (!name) name = '新建服务_' + dayjs().format('YYYY-MM-DD_HH-mm-ss');
-    const jsFileName = `${port}_${name}.js`;
-    fs.writeFileSync(jsFileName, 'module.exports =\n' + configCode.trim() + '\n', 'utf8');
+    const jsFilePath = path.join('./configs/', `${port}_${name}.js`);
+    fs.writeFileSync(jsFilePath, 'module.exports =\n' + configCode.trim() + '\n', 'utf8');
+    this.getAllConfigs();
   }
 }
 
