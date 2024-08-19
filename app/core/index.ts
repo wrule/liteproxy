@@ -4,10 +4,13 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import type { Options } from "http-proxy-middleware";
 
 export
+type ProxyConfig = { [path: string]: Options };
+
+export
 class HttpProxy {
   public constructor(
     private readonly port: number,
-    private readonly config: { [path: string]: Options },
+    private config: ProxyConfig,
     private name = '',
   ) {
     this.app = express();
@@ -34,6 +37,14 @@ class HttpProxy {
 
   public set Name(name: string) {
     this.name = name;
+  }
+
+  public get Config() {
+    return this.config;
+  }
+
+  public set Config(config: ProxyConfig) {
+    this.config = config;
   }
 
   public get Meta() {
