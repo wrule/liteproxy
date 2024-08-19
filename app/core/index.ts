@@ -41,11 +41,17 @@ class HttpProxy {
 
   public Close() {
     return new Promise<void>((resolve, reject) => {
-      if (!this.server.listening) return resolve();
-      this.server.close((error?: Error) => {
-        if (error) reject(error);
-        else resolve();
-      });
+      if (!this.server.listening) resolve();
+      else {
+        try {
+          this.server.close((error?: Error) => {
+            if (error) reject(error);
+            else resolve();
+          });
+        } catch (error) {
+          reject(error);
+        }
+      }
     });
   }
 
