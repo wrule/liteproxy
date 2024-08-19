@@ -92,28 +92,32 @@ class HttpProxyHub {
 
   public store: HttpProxy[] = [];
 
-  private getAllConfigs() {
-    const prefix = './configs/';
-    console.log(
-      fs.readdirSync(prefix)
-        .filter((name) => fs.statSync(path.join(prefix, name)).isFile())
-        .filter((name) => name.endsWith('.js'))
-        .filter((name) => /^\d+_/.test(name))
-        .map((name) => {
-          const segs = name.split('_');
-          return {
-            port: Number(segs[0]),
-            name: segs[1],
-            config: import(path.join(prefix, name)),
-          };
-        }),
-    );
+  private async getAllConfigs() {
+    const prefix = path.join(process.cwd(), './configs/');
+    const configs = fs.readdirSync(prefix)
+      .filter((name) => fs.statSync(path.join(prefix, name)).isFile())
+      .filter((name) => name.endsWith('.js'))
+      .filter((name) => /^\d+\./.test(name))
+      .map((name) => {
+        const segs = name.split('.');
+        return {
+          port: Number(segs[0]),
+          name: segs[1],
+          config: { } as any,
+          jsFilePath: path.join(prefix, name),
+        };
+      });
+    const imports = await Promise.all(configs.map((config) => import(config.jsFilePath)));
+    configs.forEach((config, index) => {
+      config.config = imports[index].default;
+    });
+    console.log(configs);
   }
 
   public Add(port: number, configCode: string, name = '') {
     if (!name) name = '新建服务_' + dayjs().format('YYYY-MM-DD_HH-mm-ss');
-    const jsFilePath = path.join('./configs/', `${port}_${name}.js`);
-    fs.writeFileSync(jsFilePath, 'module.exports =\n' + configCode.trim() + '\n', 'utf8');
+    const jsFilePath = path.join('./configs/', `${port}.${name}.js`);
+    fs.writeFileSync(jsFilePath, 'export default\n' + configCode.trim() + '\n', 'utf8');
     this.getAllConfigs();
   }
 }
@@ -124,57 +128,9 @@ async function main() {
   const hub = new HttpProxyHub();
   hub.Add(2231, `
 {
-  // 登录代理
-  '/login': {
-    target: 'http://' + XSeaHost + ':' + PaaSPort,
+  '/': {
+    target: 'http://xfiregod.perfma-inc.com/',
     changeOrigin: true,
-    headers: { Connection: 'keep-alive' },
-    cookieDomainRewrite: '',
-    // 混合重构版本需要以下配置
-    // router: (req) => {
-    //   const pathname = req.url;
-    //   const mode = req.query.mode || 'lite';
-    //   if (pathname.startsWith('/login')) {
-    //     console.log('[登录代理]', pathname, mode);
-    //     if (mode === 'pro') {
-    //       return 'http://' + XSeaHost + ':' + PaaSPort;
-    //     }
-    //   }
-    // },
-  },
-  // 显式访问企业版的代理
-  '/pro_api': {
-    target: 'http://' + XSeaHost + ':' + XSeaPort,
-    changeOrigin: true,
-    headers: { Connection: 'keep-alive' },
-    cookieDomainRewrite: '',
-    pathRewrite: { '^/pro_api' : '/api' },
-  },
-  '/paas': {
-    target: 'http://' + XSeaHost + ':' + PaaSPort,
-    changeOrigin: true,
-    headers: { Connection: 'keep-alive' },
-    cookieDomainRewrite: '',
-  },
-  '/api/paas': {
-    target: 'http://' + XSeaHost + ':' + PaaSPort,
-    changeOrigin: true,
-    headers: { Connection: 'keep-alive' },
-    cookieDomainRewrite: '',
-  },
-  // 微前端支持
-  '/old_xsea': {
-    target: 'http://' + VueXSeaHost + ':' + VueXSeaPort,
-    changeOrigin: true,
-    headers: { Connection: 'keep-alive' },
-    cookieDomainRewrite: '',
-  },
-  // 基础代理
-  '/api': {
-    target: 'http://' + host + ':' + port,
-    changeOrigin: true,
-    headers: { Connection: 'keep-alive' },
-    cookieDomainRewrite: '',
   },
 }
   `.trim());
