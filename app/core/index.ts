@@ -31,12 +31,13 @@ class HttpProxy {
     return new Promise<void>((resolve, reject) => {
       if (this.server.listening) resolve();
       else {
-        this.server.listen(this.port, () => {
-
-        });
+        try {
+          this.server.listen(this.port, () => resolve());
+        } catch (error) {
+          reject(error);
+        }
       }
     });
-    this.server.listen(this.port);
   }
 
   public Close() {
