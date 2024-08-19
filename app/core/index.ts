@@ -28,11 +28,25 @@ class HttpProxy {
   }
 
   public Listen() {
+    return new Promise<void>((resolve, reject) => {
+      if (this.server.listening) resolve();
+      else {
+        this.server.listen(this.port, () => {
+
+        });
+      }
+    });
     this.server.listen(this.port);
   }
 
   public Close() {
-    this.server.close();
+    return new Promise<void>((resolve, reject) => {
+      if (!this.server.listening) return resolve();
+      this.server.close((error?: Error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
   }
 
   public get Name() {
@@ -48,7 +62,13 @@ class HttpProxy {
   }
 
   public set Config(config: ProxyConfig) {
+    const listening = this.server.listening;
+    if (this.server.listening) {
+      this.server.close()
+    }
     this.config = config;
+    this.Reset();
+    if (listening) this.Listen();
   }
 
   public get Meta() {
