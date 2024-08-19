@@ -8,6 +8,7 @@ class HttpProxy {
   public constructor(
     private readonly port: number,
     private readonly config: { [path: string]: Options },
+    private name = '',
   ) {
     this.app = express();
     Object.entries(this.config).forEach(([path, config]) => {
@@ -25,6 +26,23 @@ class HttpProxy {
 
   public Close() {
     this.server.close();
+  }
+
+  public get Name() {
+    return this.name;
+  }
+
+  public set Name(name: string) {
+    this.name = name;
+  }
+
+  public get Meta() {
+    return {
+      name: this.name,
+      port: this.port,
+      listening: this.server.listening,
+      config: this.config,
+    };
   }
 }
 
