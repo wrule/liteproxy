@@ -61,6 +61,14 @@ class HttpProxy {
     await this.Listen();
   }
 
+  public async SetConfig(config: ProxyConfig) {
+    const listening = this.server.listening;
+    await this.Close();
+    this.config = config;
+    this.Reset();
+    if (listening) await this.Listen();
+  }
+
   public get Name() {
     return this.name;
   }
