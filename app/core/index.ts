@@ -13,15 +13,19 @@ class HttpProxy {
     private config: ProxyConfig,
     private name = '',
   ) {
+    this.Reset();
+  }
+
+  private app!: Express;
+  private server!: Server;
+
+  public Reset() {
     this.app = express();
     Object.entries(this.config).forEach(([path, config]) => {
       this.app.use(path, createProxyMiddleware(config));
     });
     this.server = http.createServer(this.app);
   }
-
-  private app: Express;
-  private server: Server;
 
   public Listen() {
     this.server.listen(this.port);
