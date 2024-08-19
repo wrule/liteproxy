@@ -69,10 +69,6 @@ class HttpProxy {
     if (listening) await this.Listen();
   }
 
-  public get Name() {
-    return this.name;
-  }
-
   public set Name(name: string) {
     this.name = name;
   }
