@@ -69,20 +69,6 @@ class HttpProxy {
     this.name = name;
   }
 
-  public get Config() {
-    return this.config;
-  }
-
-  public set Config(config: ProxyConfig) {
-    const listening = this.server.listening;
-    if (this.server.listening) {
-      this.server.close()
-    }
-    this.config = config;
-    this.Reset();
-    if (listening) this.Listen();
-  }
-
   public get Meta() {
     return {
       name: this.name,
