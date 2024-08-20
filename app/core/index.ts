@@ -109,6 +109,7 @@ class HttpProxyHub {
       name: params.name || '未命名',
       enabled: params.enabled !== 'false',
       config: await this.dimport(this.configPath(port)),
+      configCode: lines.filter((line) => !line.trim().startsWith('//$')).join('\n'),
     };
   }
 
