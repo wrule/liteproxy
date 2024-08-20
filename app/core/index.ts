@@ -95,14 +95,16 @@ class HttpProxyHub {
   }
 
   public async loadConfig(port: number) {
-    const params = Object.fromEntries(fs.readFileSync(this.configPath(port), 'utf8')
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith('//$'))
-      .map((line) => line.slice(3).trim())
-      .map((line) => line.split('=').map((seg) => seg.trim()).filter((seg) => seg))
-      .filter((segs) => segs.length >= 2)
-      .map((segs) => [segs[0], segs[1]]));
+    const lines = fs.readFileSync(this.configPath(port), 'utf8').split('\n');
+    const params = Object.fromEntries(
+      lines
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith('//$'))
+        .map((line) => line.slice(3).trim())
+        .map((line) => line.split('=').map((seg) => seg.trim()).filter((seg) => seg))
+        .filter((segs) => segs.length >= 2)
+        .map((segs) => [segs[0], segs[1]])
+    );
     return {
       name: params.name || '未命名',
       enabled: params.enabled !== 'false',
