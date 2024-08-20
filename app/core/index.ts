@@ -90,8 +90,6 @@ export
 class HttpProxyHub {
   public constructor() { }
 
-  public store: HttpProxy[] = [];
-
   private prefix = path.join(process.cwd(), 'configs/');
 
   private async dimport(jsFilePath: string) {
@@ -101,36 +99,6 @@ class HttpProxyHub {
       console.log(error);
       return { default: { } };
     }
-  }
-
-  private async getAllConfigs() {
-    const prefix = this.prefix;
-    const configs = fs.readdirSync(prefix)
-      .filter((name) => fs.statSync(path.join(prefix, name)).isFile())
-      .filter((name) => name.endsWith('.js'))
-      .filter((name) => /^\d+\./.test(name))
-      .map((name) => {
-        const segs = name.split('.');
-        return {
-          port: Number(segs[0]),
-          name: segs[1],
-          config: { } as any,
-          jsFilePath: path.join(prefix, name),
-        };
-      });
-    const imports = await Promise.all(configs.map((config) => this.dimport(config.jsFilePath)));
-    configs.forEach((config, index) => config.config = imports[index].default);
-    return configs;
-  }
-
-  public async Add(port: number, configCode: string, name = '') {
-    if (!name) name = '新建服务_' + dayjs().format('YYYY-MM-DD_HH-mm-ss');
-    const configs = await this.getAllConfigs();
-    if (configs.some((config) => config.port === port)) throw Error('端口已经存在');
-    const jsFilePath = path.join(this.prefix, `${port}.${name}.js`);
-    fs.writeFileSync(jsFilePath, 'export default\n' + configCode.trim() + '\n', 'utf8');
-    const config = await this.dimport(jsFilePath);
-    console.log(config);
   }
 }
 
