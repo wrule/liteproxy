@@ -132,9 +132,15 @@ class HttpProxyHub {
     return await this.loadConfig(port);
   }
 
-  private deleteConfig(port: number) {
+  private async deleteConfig(port: number) {
+    const target = await this.loadConfig(port);
     fs.rmSync(this.configPath(port));
+    return target;
   }
+
+  private store = new Map<number, HttpProxy>();
+
+
 
   private async dimport(jsFilePath: string) {
     try {
