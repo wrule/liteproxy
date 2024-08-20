@@ -150,8 +150,7 @@ class HttpProxyHub {
   }
 
   private async loadConfig(port: number) {
-    const configCode = fs.readFileSync(this.configPath(port), 'utf8');
-    const lines = configCode.split('\n');
+    const lines = fs.readFileSync(this.configPath(port), 'utf8').split('\n');
     const params = Object.fromEntries(
       lines
         .map((line) => line.trim())
@@ -162,10 +161,11 @@ class HttpProxyHub {
         .map((segs) => [segs[0], segs[1]])
     );
     return {
-      port, configCode,
+      port,
       name: params.name || '',
       enabled: params.enabled !== 'false',
       configPath: this.configPath(port),
+      configCode: lines.filter((line) => !line.trim().startsWith('//$')).join('\n'),
     };
   }
 
