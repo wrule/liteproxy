@@ -198,23 +198,10 @@ class HttpProxyHub {
       this.store.set(config.port, proxy);
     }
   }
-
-
-
-  private async dimport(jsFilePath: string) {
-    try {
-      return (await import(/* @vite-ignore */jsFilePath)).default ?? { };
-    } catch (error) {
-      console.log(error);
-      return { }
-    }
-  }
 }
 
 export default
 async function main() {
   console.log('你好，世界');
   const hub = new HttpProxyHub();
-  hub.deleteConfig(2221);
-  // console.log(await hub.saveConfig(2221, `export default { '/api': 1234 }`, '鸡毛服务3445', true));
 }
