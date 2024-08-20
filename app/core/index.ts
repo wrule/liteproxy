@@ -183,21 +183,6 @@ class HttpProxyHub {
     fs.rmSync(this.configPath(port));
     return target;
   }
-
-  private store = new Map<number, HttpProxy>();
-
-  private async bindConfig(config: Awaited<ReturnType<typeof this.loadConfig>>) {
-    if (this.store.has(config.port)) {
-      const proxy = this.store.get(config.port) as HttpProxy;
-      proxy.Name = config.name;
-      proxy.SetConfig(config.config);
-      proxy.Reset();
-    } else {
-      const proxy = new HttpProxy(config.port, config.config, config.name);
-      if (config.enabled) await proxy.Listen();
-      this.store.set(config.port, proxy);
-    }
-  }
 }
 
 export default
