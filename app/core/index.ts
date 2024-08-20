@@ -175,13 +175,10 @@ class HttpProxyHub {
       `//$ name = ${name}\n//$ enabled = ${enabled}\n${configCode}\n`,
       'utf8',
     );
-    return await this.loadConfig(port);
   }
 
   private async deleteConfig(port: number) {
-    const target = await this.loadConfig(port);
     fs.rmSync(this.configPath(port));
-    return target;
   }
 }
 
