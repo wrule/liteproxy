@@ -90,8 +90,17 @@ export
 class HttpProxyHub {
   public constructor() { }
 
+  private readonly dirPath = path.join(process.cwd(), 'configs');
+
   private configPath(port: number) {
-    return path.join(process.cwd(), 'configs', `${port}.js`);
+    return path.join(this.dirPath, `${port}.js`);
+  }
+
+  private allPorts() {
+    return fs.readdirSync(this.dirPath)
+      .filter((name) => /\d+\.js/.test(name))
+      .filter((name) => fs.statSync(path.join(this.dirPath, name)).isFile())
+      .map((name) => Number(name.replace('.js', '')));
   }
 
   private async loadConfig(port: number) {
