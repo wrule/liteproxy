@@ -106,6 +106,7 @@ class HttpProxyHub {
         .map((segs) => [segs[0], segs[1]])
     );
     return {
+      port,
       name: params.name || '未命名',
       enabled: params.enabled !== 'false',
       config: await this.dimport(this.configPath(port)),
