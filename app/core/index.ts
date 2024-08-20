@@ -7,6 +7,16 @@ import type { Options } from "http-proxy-middleware";
 import dayjs from "dayjs";
 
 export
+async function dimport(jsFilePath: string) {
+  try {
+    return (await import(/* @vite-ignore */jsFilePath)).default ?? { };
+  } catch (error) {
+    console.log(error);
+    return { }
+  }
+}
+
+export
 type ProxyConfig = { [path: string]: Options };
 
 export
