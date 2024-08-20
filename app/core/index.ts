@@ -94,7 +94,7 @@ class HttpProxyHub {
     return path.join(process.cwd(), 'configs', `${port}.js`);
   }
 
-  private loadConfig(port: number) {
+  public loadConfig(port: number) {
     const params = Object.fromEntries(fs.readFileSync(this.configPath(port), 'utf8')
       .split('\n')
       .map((line) => line.trim())
@@ -103,7 +103,10 @@ class HttpProxyHub {
       .map((line) => line.split('=').map((seg) => seg.trim()).filter((seg) => seg))
       .filter((segs) => segs.length >= 2)
       .map((segs) => [segs[0], segs[1]]));
-    console.log(params);
+    return {
+      name: params.name || '未命名',
+      enabled: params.enabled !== 'false',
+    };
   }
 
   private saveConfig(port: number, configCode: string) {
@@ -124,12 +127,5 @@ export default
 async function main() {
   console.log('你好，世界');
   const hub = new HttpProxyHub();
-  hub.Add(9098, `
-{
-  '/': {
-    target: 'http://xfiregod.perfma-inc.com/',
-    changeOrigin: true,
-  },
-}
-  `.trim());
+  console.log(hub.loadConfig(9021));
 }
