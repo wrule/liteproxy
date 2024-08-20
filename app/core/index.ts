@@ -99,7 +99,10 @@ class HttpProxyHub {
       .split('\n')
       .map((line) => line.trim())
       .filter((line) => line.startsWith('//'))
-      .map((line) => line.slice(2).trim());
+      .map((line) => line.slice(2).trim())
+      .map((line) => line.split('=').map((seg) => seg.trim()).filter((seg) => seg))
+      .filter((segs) => segs.length >= 2)
+      .map((segs) => [segs[0], segs[1]]);
   }
 
   private saveConfig(port: number, configCode: string) {
