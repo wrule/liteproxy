@@ -113,8 +113,13 @@ class HttpProxyHub {
     };
   }
 
-  private saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
-
+  public async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
+    fs.writeFileSync(
+      this.configPath(port),
+      `//$ name = ${name}\n//$ enabled = ${enabled}\n${configCode}`,
+      'utf8',
+    );
+    return await this.loadConfig(port);
   }
 
   private async dimport(jsFilePath: string) {
