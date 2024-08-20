@@ -169,6 +169,10 @@ class HttpProxyHub {
     };
   }
 
+  private async listConfig(pageNum: number, pageSize: number) {
+    const allConfigs = await Promise.all(this.allPorts().map((port) => this.loadConfig(port)));
+  }
+
   private async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
     fs.writeFileSync(
       this.configPath(port),
