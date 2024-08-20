@@ -90,10 +90,20 @@ export
 class HttpProxyHub {
   public constructor() { }
 
-  private prefix = path.join(process.cwd(), 'configs/');
-
   private configPath(port: number) {
     return path.join(process.cwd(), 'configs', `${port}.js`);
+  }
+
+  private loadConfig(port: number) {
+    fs.readFileSync(this.configPath(port), 'utf8')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('//'))
+      .map((line) => line.slice(2).trim());
+  }
+
+  private saveConfig(port: number, configCode: string) {
+
   }
 
   private async dimport(jsFilePath: string) {
