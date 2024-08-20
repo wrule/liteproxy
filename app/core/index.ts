@@ -122,6 +122,10 @@ class HttpProxyHub {
     return await this.loadConfig(port);
   }
 
+  public deleteConfig(port: number) {
+    fs.rmSync(this.configPath(port));
+  }
+
   private async dimport(jsFilePath: string) {
     try {
       return (await import(/* @vite-ignore */jsFilePath)).default ?? { };
@@ -136,5 +140,6 @@ export default
 async function main() {
   console.log('你好，世界');
   const hub = new HttpProxyHub();
-  console.log(await hub.saveConfig(2221, `export default { '/api': 1234 }`, '鸡毛服务', true));
+  hub.deleteConfig(2221);
+  // console.log(await hub.saveConfig(2221, `export default { '/api': 1234 }`, '鸡毛服务3445', true));
 }
