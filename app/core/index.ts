@@ -116,7 +116,7 @@ class HttpProxyHub {
   public async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
     fs.writeFileSync(
       this.configPath(port),
-      `//$ name = ${name}\n//$ enabled = ${enabled}\n${configCode}`,
+      `//$ name = ${name}\n//$ enabled = ${enabled}\n${configCode}\n`,
       'utf8',
     );
     return await this.loadConfig(port);
@@ -136,5 +136,5 @@ export default
 async function main() {
   console.log('你好，世界');
   const hub = new HttpProxyHub();
-  console.log(hub.loadConfig(9021));
+  console.log(await hub.saveConfig(2221, `export default { '/api': 1234 }`, '鸡毛服务', true));
 }
