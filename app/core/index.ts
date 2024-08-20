@@ -94,7 +94,7 @@ class HttpProxyHub {
     return path.join(process.cwd(), 'configs', `${port}.js`);
   }
 
-  public loadConfig(port: number) {
+  public async loadConfig(port: number) {
     const params = Object.fromEntries(fs.readFileSync(this.configPath(port), 'utf8')
       .split('\n')
       .map((line) => line.trim())
@@ -106,6 +106,7 @@ class HttpProxyHub {
     return {
       name: params.name || '未命名',
       enabled: params.enabled !== 'false',
+      config: await this.dimport(this.configPath(port)),
     };
   }
 
@@ -115,10 +116,10 @@ class HttpProxyHub {
 
   private async dimport(jsFilePath: string) {
     try {
-      return await import(/* @vite-ignore */jsFilePath);
+      return (await import(/* @vite-ignore */jsFilePath)).default ?? { };
     } catch (error) {
       console.log(error);
-      return { default: { } };
+      return { }
     }
   }
 }
