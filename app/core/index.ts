@@ -11,16 +11,52 @@ type ProxyConfig = { [path: string]: Options };
 
 export
 class HttpProxy {
-  public constructor(
-    private readonly port: number,
-    private config: ProxyConfig,
-    private name = '',
-  ) {
-    this.Reset();
+  public constructor(private readonly port: number) {
+    this.app = express();
+    this.server = http.createServer(this.app);
   }
 
-  private app!: Express;
-  private server!: Server;
+  private app: Express;
+  private server: Server;
+
+  private async dimport(jsFilePath: string) {
+    try {
+      return (await import(/* @vite-ignore */jsFilePath)).default ?? { };
+    } catch (error) {
+      console.log(error);
+      return { }
+    }
+  }
+
+  private readonly dirPath = path.join(process.cwd(), 'configs');
+
+  private configPath(port: number) {
+    return path.join(this.dirPath, `${port}.js`);
+  }
+
+  private async loadConfig(port: number) {
+    const lines = fs.readFileSync(this.configPath(port), 'utf8').split('\n');
+    const params = Object.fromEntries(
+      lines
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith('//$'))
+        .map((line) => line.slice(3).trim())
+        .map((line) => line.split('=').map((seg) => seg.trim()).filter((seg) => seg))
+        .filter((segs) => segs.length >= 2)
+        .map((segs) => [segs[0], segs[1]])
+    );
+    return {
+      port,
+      name: params.name || '未命名',
+      enabled: params.enabled !== 'false',
+      config: await this.dimport(this.configPath(port)),
+      configCode: lines.filter((line) => !line.trim().startsWith('//$')).join('\n'),
+    };
+  }
+
+  public async Load() {
+
+  }
 
   public Reset() {
     this.app = express();
