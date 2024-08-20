@@ -92,6 +92,10 @@ class HttpProxyHub {
 
   private prefix = path.join(process.cwd(), 'configs/');
 
+  private configPath(port: number) {
+    return path.join(process.cwd(), 'configs', `${port}.js`);
+  }
+
   private async dimport(jsFilePath: string) {
     try {
       return await import(/* @vite-ignore */jsFilePath);
