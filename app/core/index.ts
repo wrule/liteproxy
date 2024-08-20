@@ -94,7 +94,7 @@ class HttpProxyHub {
     return path.join(process.cwd(), 'configs', `${port}.js`);
   }
 
-  public async loadConfig(port: number) {
+  private async loadConfig(port: number) {
     const lines = fs.readFileSync(this.configPath(port), 'utf8').split('\n');
     const params = Object.fromEntries(
       lines
@@ -114,7 +114,7 @@ class HttpProxyHub {
     };
   }
 
-  public async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
+  private async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
     fs.writeFileSync(
       this.configPath(port),
       `//$ name = ${name}\n//$ enabled = ${enabled}\n${configCode}\n`,
@@ -123,7 +123,7 @@ class HttpProxyHub {
     return await this.loadConfig(port);
   }
 
-  public deleteConfig(port: number) {
+  private deleteConfig(port: number) {
     fs.rmSync(this.configPath(port));
   }
 
