@@ -13,7 +13,7 @@ function Doc() {
   return <>
     <Header />
     <Sider>
-      <Menu />
+      <Menu items={[{ name: '代理', path: '/proxy' }]} />
     </Sider>
     <Content>
       <Outlet />
