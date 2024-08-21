@@ -205,6 +205,26 @@ class HttpProxyHub {
   private deleteConfig(port: number) {
     fs.rmSync(this.configPath(port));
   }
+
+  public Add(port: number, configCode: string, name: string, enabled: boolean) {
+    return this.addConfig(port, configCode, name, enabled);
+  }
+
+  public Remove(port: number) {
+    return this.deleteConfig(port);
+  }
+
+  public Update(port: number, configCode: string, name: string, enabled: boolean) {
+    return this.saveConfig(port, configCode, name, enabled);
+  }
+
+  public Query(pageNum: number, pageSize: number) {
+    return this.listConfig(pageNum, pageSize);
+  }
+
+  public Find(port: number) {
+    return this.loadConfig(port);
+  }
 }
 
 export default
