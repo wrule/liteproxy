@@ -200,7 +200,7 @@ class HttpProxyHub {
     return this.saveConfig(port, configCode, name, enabled);
   }
 
-  private async deleteConfig(port: number) {
+  private deleteConfig(port: number) {
     fs.rmSync(this.configPath(port));
   }
 }
