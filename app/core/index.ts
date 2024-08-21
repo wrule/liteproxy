@@ -231,4 +231,7 @@ export default
 async function main() {
   console.log('你好，世界');
   const hub = new HttpProxyHub();
+  // hub.Remove(1008);
+  // hub.Add(9003, '', '鸡毛1', true);
+  console.log(await hub.Query(2, 5));
 }
