@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import hub from "../core";
-import { Button, Space, Switch, Table } from "antd";
+import { Button, Modal, Space, Switch, Table } from "antd";
 
 export const meta: MetaFunction = () => {
   return [{ title: "LiteProxy" }];
@@ -39,7 +39,7 @@ function DocProxy() {
             width: 120,
             render: (value, record) => {
               return <Space>
-                <Switch size="small" />
+                <Switch size="small" checked={value} />
                 <span>启用</span>
               </Space>;
             },
@@ -50,7 +50,18 @@ function DocProxy() {
             render: (record) => {
               return <Space>
                 <Button size="small" type="link" className="p-0">编辑</Button>
-                <Button size="small" type="link" danger className="p-0">删除</Button>
+                <Button size="small" type="link" danger className="p-0" onClick={() => {
+                  Modal.confirm({
+                    title: '系统提示',
+                    content: <div>
+                      <div>确认删除此代理服务？</div>
+                      <div className="mt-1 px-2 py-1 bg-gray-200">1123</div>
+                    </div>,
+                    onOk: () => {
+
+                    },
+                  });
+                }}>删除</Button>
               </Space>;
             },
           },
@@ -58,6 +69,9 @@ function DocProxy() {
         dataSource={page.list}
         pagination={{
           size: 'default',
+          total: page.total,
+          current: page.pageNum,
+          pageSize: page.pageSize,
         }}
       />
     </div>
