@@ -155,6 +155,7 @@ class HttpProxyHub {
       lines = fs.readFileSync(this.configPath(port), 'utf8').split('\n');
     } catch (error) {
       console.log(error);
+      return null;
     }
     const params = Object.fromEntries(
       lines
@@ -177,7 +178,8 @@ class HttpProxyHub {
   private async listConfig(pageNum: number, pageSize: number) {
     if (pageNum < 1) pageNum = 1;
     if (pageSize < 1) pageSize = 1;
-    const allConfigs = await Promise.all(this.allPorts().map((port) => this.loadConfig(port)));
+    const allConfigs = (await Promise.all(this.allPorts().map((port) => this.loadConfig(port))))
+      .filter((config) => config);
     const total = allConfigs.length;
     const pageCount = Math.ceil(total / pageSize);
     if (pageNum > pageCount) pageNum = pageCount;
