@@ -179,7 +179,7 @@ class HttpProxyHub {
     if (pageNum < 1) pageNum = 1;
     if (pageSize < 1) pageSize = 1;
     const allConfigs = (await Promise.all(this.allPorts().map((port) => this.loadConfig(port))))
-      .filter((config) => config);
+      .filter((config) => config) as NonNullable<Awaited<ReturnType<typeof this.loadConfig>>>[];
     const total = allConfigs.length;
     const pageCount = Math.ceil(total / pageSize);
     if (pageNum > pageCount) pageNum = pageCount;
