@@ -195,6 +195,11 @@ class HttpProxyHub {
     );
   }
 
+  private addConfig(port: number, configCode: string, name: string, enabled: boolean) {
+    if (this.allPorts().includes(port)) throw '';
+    return this.saveConfig(port, configCode, name, enabled);
+  }
+
   private async deleteConfig(port: number) {
     fs.rmSync(this.configPath(port));
   }
