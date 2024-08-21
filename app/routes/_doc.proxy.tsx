@@ -1,13 +1,23 @@
-import { MetaFunction } from "@remix-run/react";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { MetaFunction, useLoaderData } from "@remix-run/react";
+import hub from "../core";
 
 export const meta: MetaFunction = () => {
   return [{ title: "LiteProxy" }];
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const searchParams = new URL(request.url).searchParams;
+  const pageNum = Number(searchParams.get('pageNum') ?? 1);
+  const pageSize = Number(searchParams.get('pageSize') ?? 10);
+  return hub.Query(pageNum, pageSize);
+}
+
 export default
 function DocProxy() {
+  const page = useLoaderData<typeof loader>();
+
   return <div className="p-4">
-    <div></div>
     <div>
       <table className="w-full bg-white border-t border-x text-left">
         <thead>
@@ -19,18 +29,12 @@ function DocProxy() {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b">
-            <td className="px-2 py-1">8080</td>
-            <td className="px-2 py-1">默认</td>
-            <td className="px-2 py-1">已启用</td>
+          {page.list.map((item) => <tr className="border-b">
+            <td className="px-2 py-1">{item.port}</td>
+            <td className="px-2 py-1">{item.name}</td>
+            <td className="px-2 py-1">{item.enabled}</td>
             <td className="px-2 py-1"></td>
-          </tr>
-          <tr className="border-b">
-            <td className="px-2 py-1">8081</td>
-            <td className="px-2 py-1">默认</td>
-            <td className="px-2 py-1">已启用</td>
-            <td className="px-2 py-1"></td>
-          </tr>
+          </tr>)}
         </tbody>
       </table>
     </div>
