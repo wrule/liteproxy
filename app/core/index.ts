@@ -196,7 +196,7 @@ class HttpProxyHub {
   }
 
   private addConfig(port: number, configCode: string, name: string, enabled: boolean) {
-    if (this.allPorts().includes(port)) throw '';
+    if (this.allPorts().includes(port)) throw Error('duplicate port');
     return this.saveConfig(port, configCode, name, enabled);
   }
 
