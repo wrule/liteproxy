@@ -170,7 +170,16 @@ class HttpProxyHub {
   }
 
   private async listConfig(pageNum: number, pageSize: number) {
+    if (pageNum < 1) pageNum = 1;
+    if (pageSize < 1) pageSize = 1;
     const allConfigs = await Promise.all(this.allPorts().map((port) => this.loadConfig(port)));
+    const total = allConfigs.length;
+    const pageCount = Math.ceil(total / pageSize);
+    if (pageNum > pageCount) pageNum = pageCount;
+    return {
+      total, pageNum, pageSize, pageCount,
+      list: allConfigs.slice((pageNum - 1) * pageSize, pageNum * pageSize),
+    };
   }
 
   private async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
