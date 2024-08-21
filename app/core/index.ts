@@ -187,7 +187,7 @@ class HttpProxyHub {
     };
   }
 
-  private async saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
+  private saveConfig(port: number, configCode: string, name: string, enabled: boolean) {
     fs.writeFileSync(
       this.configPath(port),
       `//$ name = ${name}\n//$ enabled = ${enabled}\n${configCode}\n`,
