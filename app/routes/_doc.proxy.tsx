@@ -11,7 +11,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const searchParams = new URL(request.url).searchParams;
   const pageNum = Number(searchParams.get('pageNum') ?? 1);
   const pageSize = Number(searchParams.get('pageSize') ?? 10);
-  return hub.Query(pageNum, pageSize);
+  return json(await hub.Query(pageNum, pageSize));
 }
 
 export default
@@ -25,6 +25,7 @@ function DocProxy() {
     </div>
     <div className="mt-2">
       <Table
+        rowKey="port"
         bordered
         size="small"
         columns={[
