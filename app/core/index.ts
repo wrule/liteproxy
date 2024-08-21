@@ -183,6 +183,7 @@ class HttpProxyHub {
     const total = allConfigs.length;
     const pageCount = Math.ceil(total / pageSize);
     if (pageNum > pageCount) pageNum = pageCount;
+    if (pageNum < 1) pageNum = 1;
     return {
       total, pageNum, pageSize, pageCount,
       list: allConfigs.slice((pageNum - 1) * pageSize, pageNum * pageSize),
