@@ -1,6 +1,7 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import hub from "../core";
+import { Button, Space, Switch, Table } from "antd";
 
 export const meta: MetaFunction = () => {
   return [{ title: "LiteProxy" }];
@@ -19,24 +20,46 @@ function DocProxy() {
 
   return <div className="p-4">
     <div>
-      <table className="w-full bg-white border-t border-x text-left">
-        <thead>
-          <tr className="border-b">
-            <th className="px-2 py-1">端口</th>
-            <th className="px-2 py-1">名称</th>
-            <th className="px-2 py-1">状态</th>
-            <th className="px-2 py-1">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {page.list.map((item) => <tr className="border-b">
-            <td className="px-2 py-1">{item.port}</td>
-            <td className="px-2 py-1">{item.name}</td>
-            <td className="px-2 py-1">{item.enabled}</td>
-            <td className="px-2 py-1"></td>
-          </tr>)}
-        </tbody>
-      </table>
+      <Table
+        bordered
+        size="small"
+        columns={[
+          {
+            title: '端口',
+            dataIndex: 'port',
+            width: 100,
+          },
+          {
+            title: '名称',
+            dataIndex: 'name',
+          },
+          {
+            title: '状态',
+            dataIndex: 'enabled',
+            width: 120,
+            render: (value, record) => {
+              return <Space>
+                <Switch size="small" />
+                <span>启用</span>
+              </Space>;
+            },
+          },
+          {
+            title: '操作',
+            width: 120,
+            render: (record) => {
+              return <Space>
+                <Button size="small" type="link" className="p-0">编辑</Button>
+                <Button size="small" type="link" danger className="p-0">删除</Button>
+              </Space>;
+            },
+          },
+        ]}
+        dataSource={page.list}
+        pagination={{
+          size: 'default',
+        }}
+      />
     </div>
   </div>;
 }
