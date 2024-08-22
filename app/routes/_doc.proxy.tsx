@@ -21,7 +21,7 @@ function DocProxy() {
   return <div className="p-4">
     <div className="flex justify-between">
       <span></span>
-      <Button>新增代理</Button>
+      <Button type="primary">新增代理</Button>
     </div>
     <div className="mt-2">
       <Table

@@ -1,4 +1,5 @@
 import { MetaFunction, Outlet } from "@remix-run/react";
+import { ConfigProvider } from "antd";
 import Content from "~/components/Content";
 import Header from "~/components/Header";
 import Menu from "~/components/Menu";
@@ -10,7 +11,12 @@ export const meta: MetaFunction = () => {
 
 export default
 function Doc() {
-  return <>
+  return <ConfigProvider theme={{
+    token: {
+      colorPrimary: '#fdcd12',
+      borderRadius: 2,
+    },
+  }}>
     <Header />
     <Sider>
       <Menu items={[{ name: '代理', path: '/proxy' }]} />
@@ -18,5 +24,5 @@ function Doc() {
     <Content>
       <Outlet />
     </Content>
-  </>;
+  </ConfigProvider>;
 }
