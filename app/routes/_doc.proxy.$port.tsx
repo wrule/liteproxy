@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   let result = { };
-  const port = params.id;
+  const port = params.port;
   if (port && port.toLowerCase() !== 'new') {
   }
   return json(result);
